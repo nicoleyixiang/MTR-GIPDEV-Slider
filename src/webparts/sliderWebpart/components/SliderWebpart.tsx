@@ -55,7 +55,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
               <SwiperSlide className="myswiperslide">
                 <div className="swiper__card">
                   <div className="swiper-img__container">
-                    <img className="swiper-card__image" src={JSON.parse(item.RollupImage).serverRelativeUrl}></img>
+                    <img className="swiper-card__image" src={item.RollupImage ? JSON.parse(item.RollupImage).serverRelativeUrl : "https://outhink.com/wp-content/themes/outhink-theme/images/ip.jpg"}></img>
                   </div>
                   <div className="swiper-content__container">
                     <div className="swiper-card__title">
@@ -79,6 +79,8 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
 
   private _getItemsFromSPList() {
     pnp.sp.web.lists.getByTitle(listName).items
+      .filter("OData__ModerationStatus eq '0'")
+      .orderBy("Created", false)
       .top(5)
       .get()
       .then
