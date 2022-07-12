@@ -5,6 +5,8 @@ export class ClassItem {
     public Content_EN : string;
     public RollupImage : string;
     public ID : number;
+    public DisplayOrder : number;
+    public PublishDate : string;
 
     constructor(item : ISPItem) {
         this.Title = item.Title;

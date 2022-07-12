@@ -1,3 +1,11 @@
+.swiper-main__container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
 .myswiper {
     width: 800px;
     height: 370px;
@@ -42,6 +50,10 @@
     color: black;
     padding-top: 5px;
     padding-bottom: 5px;
+
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
 }
 
 .swiper-content__container {
@@ -62,6 +74,7 @@
     width: 95%;
     height: 100%;
 }
+
 /* 
 ::-webkit-scrollbar {
     width: 6px;
@@ -118,6 +131,32 @@ a.learn__more {
 
 a.learn__more:hover {
     color: rgb(41, 89, 123);
+    background-color: white;
+    text-decoration: none;
+}
+
+.see__list {
+    background-color: grey;
+    color: white;
+    padding: 10px;
+    bottom: 30px;
+    left: 10px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    border-color: grey;
+    border-width: thin;
+    font-size: 0.9em;
+    text-decoration: none;
+    border-style: solid;
+}
+
+a.see__list {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+}
+
+a.see__list:hover {
+    color: grey;
     background-color: white;
     text-decoration: none;
 }

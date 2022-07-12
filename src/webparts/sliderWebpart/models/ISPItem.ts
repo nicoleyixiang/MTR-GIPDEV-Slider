@@ -3,4 +3,6 @@ export interface ISPItem {
     Content_EN : string;
     RollupImage : string;
     ID : number;
+    DisplayOrder : number;
+    PublishDate : string;
 }
