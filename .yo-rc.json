@@ -1,0 +1,16 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "version": "1.15.0",
+    "libraryName": "slider-webpart",
+    "libraryId": "869cabfc-7919-4e89-9eb3-9dd5cdf9fd17",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "slider-webpart",
+    "solutionShortDescription": "slider-webpart description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

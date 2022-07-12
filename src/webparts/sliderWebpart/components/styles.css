@@ -1,0 +1,127 @@
+.myswiper {
+    width: 70%;
+    height: 370px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card {
+    background-color: white;
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    width: 100%;
+    height: calc(100% - 30px);
+}
+
+.img__container {
+    width: 400px;
+    height: 320px;
+    padding-right: 15px;
+}
+
+.img__container img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    padding-right: 10px;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.card__title {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-style: bold;
+    font-size: 20px;
+    color: black;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.content__container {
+    width: 390px;
+    height: 280px;
+    padding: 20px;
+}
+
+.card__content {
+    width: 100%;
+    height: 165px;
+    padding-bottom: 15px;
+}
+
+.card__content p {
+    overflow: hidden;
+    overflow-y: auto;
+    width: 95%;
+    height: 100%;
+}
+
+.myswiper .swiper-pagination-bullet {
+    width: 40px;
+    height: 6px;
+    border-radius: 0px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    color: #000;
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.myswiper .swiper-pagination-bullet-active {
+    background: rgb(146,51,79)
+}
+
+
+.back__button {
+    background-color: rgb(41,89,123);
+    color: white;
+    padding: 10px;
+    bottom: 30px;
+    left: 10px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    border-color: rgb(41,89,123);
+    border-width: thin;
+    font-size: 0.9em;
+    text-decoration: none;
+    border-style: solid;
+}
+
+a.back__button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+}
+
+a.back__button:hover {
+    color: rgb(41,89,123);
+    background-color: white;
+    text-decoration: none;
+}
+
+@media screen and (max-width: 900px)
+{
+    .myswiper {
+        width: 70%;
+        height: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .card {
+        flex-direction: column;
+        width: 100%;
+        height: max-content;
+    }
+
+    .img__container {
+        width: 100%;
+    }
+
+    .content__container {
+        width: 95%;
+    }
+    
+}
