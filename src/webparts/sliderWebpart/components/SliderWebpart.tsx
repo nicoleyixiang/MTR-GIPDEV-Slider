@@ -50,28 +50,28 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
       renderBullet: function (index, className) {
         return '<span class="' + className + '">' + "</span>";
       }
-    }; 
- 
+    };
+
     return (
       <div className="swiper-main__container">
         <Swiper
           modules={[EffectFade, Pagination]}
           pagination={pagination}
-          speed={800} 
+          speed={800}
           initialSlide={0}
-          slidesPerView={1}  
+          slidesPerView={1}
           className="myswiper">
-          { 
+          {
             this.state.displayItems.map((item) =>
               <SwiperSlide className="myswiperslide">
                 <div className="swiper__card">
                   <div className="swiper-img__container">
                     <img className="swiper-card__image" src={item.RollupImage ? JSON.parse(item.RollupImage).serverRelativeUrl : "https://outhink.com/wp-content/themes/outhink-theme/images/ip.jpg"}></img>
-                  </div> 
+                  </div>
                   <div className="swiper-content__container">
                     <div className="swiper-card__title">
                       {item.Title}
-                    </div> 
+                    </div>
                     <div className="swiper-card__content">
                       <p>{ReactHtmlParser(item.Content_EN)}</p>
                     </div>
@@ -85,7 +85,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
           }
         </Swiper>
         <div>
-          <a href={"https://waion365.sharepoint.com/sites/MTR-GIPDEV/SitePages/Publications.aspx"} className = "see__list">GO TO FULL LISTING</a>
+          <a href={"https://waion365.sharepoint.com/sites/MTR-GIPDEV/SitePages/Publications.aspx"} className="see__list">GO TO FULL LISTING</a>
         </div>
       </div>
     );
@@ -97,42 +97,10 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     let nowString = currDate.toISOString();
 
     pnp.sp.web.lists.getByTitle(listName).items
-    .filter("OData__ModerationStatus eq '0' and PublishDate lt '" + nowString + "'  and UnpublishDate gt '" + nowString + "'")
-    .select("Title", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
-    .get().then
-      ((Response) => {
-        let displayOrderItems = Response.filter(item => item.DisplayOrder !== null);
-        let rest = Response.filter(item => item.DisplayOrder === null);
-
-        // Sorting items with display order fields in ascending order 
-        displayOrderItems.sort(function(item1, item2){
-          if(item1.DisplayOrder === null)
-          {
-            return 1;
-          }
-          else if (item2.DisplayOrder === null)
-          {
-            return -1;
-          }
-          else if (item1.DisplayOrder - item2.DisplayOrder === 0)
-          {
-            if (item1.PublishDate > item2.PublishDate) return -1;
-            return 1;
-          }
-          return item1.DisplayOrder - item2.DisplayOrder;
-        });
-
-        // Sorting the rest of the list by most recent first 
-        rest.sort(function(item1, item2) {
-          if (item1.PublishDate > item2.PublishDate) return -1;
-          return 1;
-        })
-
-        // Combine both lists with display order items in front
-        let allListItems = displayOrderItems.concat(rest);
-
-        this.setState({ displayItems: allListItems.slice(0, 5) });
-      })
+      .filter("OData__ModerationStatus eq '0' and PublishDate lt '" + nowString + "'  and UnpublishDate gt '" + nowString + "'")
+      .select("Title", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
+      .get().then
+      ((Response) => {this._filterAndSet(Response)});
   }
 
   private _getPreviewSPListItems() {
@@ -140,41 +108,41 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     let nowString = currDate.toISOString();
 
     pnp.sp.web.lists.getByTitle(listName).items
-    .filter("UnpublishDate gt '" + nowString + "'")
-    .select("Title", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
-    .get().then
-      ((Response) => {
-        let displayOrderItems = Response.filter(item => item.DisplayOrder !== null);
-        let rest = Response.filter(item => item.DisplayOrder === null);
+      .filter("UnpublishDate gt '" + nowString + "'")
+      .select("Title", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
+      .get().then
+      ((Response) => {this._filterAndSet(Response)});
+  }
 
-        // Sorting items with display order fields in ascending order 
-        displayOrderItems.sort(function(item1, item2){
-          if(item1.DisplayOrder === null)
-          {
-            return 1;
-          }
-          else if (item2.DisplayOrder === null)
-          {
-            return -1;
-          }
-          else if (item1.DisplayOrder - item2.DisplayOrder === 0)
-          {
-            if (item1.PublishDate > item2.PublishDate) return -1;
-            return 1;
-          }
-          return item1.DisplayOrder - item2.DisplayOrder;
-        });
+  private _filterAndSet(response) {
+    console.log("Setting up the list items...");
+    let displayOrderItems = response.filter(item => item.DisplayOrder !== null);
+    let rest = response.filter(item => item.DisplayOrder === null);
 
-        // Sorting the rest of the list by most recent first 
-        rest.sort(function(item1, item2) {
-          if (item1.PublishDate > item2.PublishDate) return -1;
-          return 1;
-        })
+    // Sorting items with display order fields in ascending order 
+    displayOrderItems.sort(function (item1, item2) {
+      if (item1.DisplayOrder === null) {
+        return 1;
+      }
+      else if (item2.DisplayOrder === null) {
+        return -1;
+      }
+      else if (item1.DisplayOrder - item2.DisplayOrder === 0) {
+        if (item1.PublishDate > item2.PublishDate) return -1;
+        return 1;
+      }
+      return item1.DisplayOrder - item2.DisplayOrder;
+    });
 
-        // Combine both lists with display order items in front
-        let allListItems = displayOrderItems.concat(rest);
+    // Sorting the rest of the list by most recent first 
+    rest.sort(function (item1, item2) {
+      if (item1.PublishDate > item2.PublishDate) return -1;
+      return 1;
+    })
 
-        this.setState({ displayItems: allListItems.slice(0, 5) });
-      })
+    // Combine both lists with display order items in front
+    let allListItems = displayOrderItems.concat(rest);
+
+    this.setState({ displayItems: allListItems.slice(0, 5) });
   }
 }
