@@ -37,17 +37,16 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
       renderBullet: function (index, className) {
         return '<span class="' + className + '">' + "</span>";
       }
-    }; 
+    };
  
     return (
       <div className="main__container">
         <Swiper
           modules={[EffectFade, Pagination]}
           pagination={pagination}
-          speed={800}
-          initialSlide={1}
-          slidesPerView={1}
-          loop 
+          speed={800} 
+          initialSlide={0}
+          slidesPerView={1} 
           className="myswiper">
           { 
             this.state.displayItems.map((item) =>
