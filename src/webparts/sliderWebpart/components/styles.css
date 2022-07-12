@@ -183,4 +183,14 @@ a.see__list:hover {
         width: 95%;
     }
 
+    .swiper-button {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .learn__more {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
 }

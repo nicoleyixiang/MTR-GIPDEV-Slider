@@ -50,7 +50,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
       renderBullet: function (index, className) {
         return '<span class="' + className + '">' + "</span>";
       }
-    };
+    }; 
  
     return (
       <div className="swiper-main__container">
@@ -67,11 +67,11 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
                 <div className="swiper__card">
                   <div className="swiper-img__container">
                     <img className="swiper-card__image" src={item.RollupImage ? JSON.parse(item.RollupImage).serverRelativeUrl : "https://outhink.com/wp-content/themes/outhink-theme/images/ip.jpg"}></img>
-                  </div>
+                  </div> 
                   <div className="swiper-content__container">
                     <div className="swiper-card__title">
                       {item.Title}
-                    </div>
+                    </div> 
                     <div className="swiper-card__content">
                       <p>{ReactHtmlParser(item.Content_EN)}</p>
                     </div>
