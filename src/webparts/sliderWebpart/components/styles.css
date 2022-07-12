@@ -10,7 +10,7 @@
     border-color: none;
 }
 
-.card {
+.swiper__card {
     background-color: rgb(247, 249, 252);
     display: flex;
     position: relative;
@@ -19,13 +19,13 @@
     height: max-content;
 }
 
-.img__container {
+.swiper-img__container {
     width: 400px;
     height: 320px;
     padding-right: 15px;
 }
 
-.img__container img {
+.swiper-img__container img {
     width: 100%;
     height: 100%;
     display: block;
@@ -35,7 +35,7 @@
     background-repeat: no-repeat;
 }
 
-.card__title {
+.swiper-card__title {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-style: bold;
     font-size: 20px;
@@ -44,19 +44,19 @@
     padding-bottom: 5px;
 }
 
-.content__container {
+.swiper-content__container {
     width: 390px;
     height: 280px;
     padding: 20px;
 }
 
-.card__content {
+.swiper-card__content {
     width: 100%;
     height: 165px;
     padding-bottom: 15px;
 }
 
-.card__content p {
+.swiper-card__content p {
     overflow: hidden;
     overflow-y: auto;
     width: 95%;
@@ -96,7 +96,7 @@
 }
 
 
-.back__button {
+.learn__more {
     background-color: rgb(41, 89, 123);
     color: white;
     padding: 10px;
@@ -110,13 +110,13 @@
     border-style: solid;
 }
 
-a.back__button {
+a.learn__more {
     -webkit-appearance: button;
     -moz-appearance: button;
     appearance: button;
 }
 
-a.back__button:hover {
+a.learn__more:hover {
     color: rgb(41, 89, 123);
     background-color: white;
     text-decoration: none;
@@ -130,17 +130,17 @@ a.back__button:hover {
         margin-right: auto;
     }
 
-    .card {
+    .swiper__card {
         flex-direction: column;
         width: 100%;
         height: max-content;
     }
 
-    .img__container {
+    .swiper-img__container {
         width: 100%;
     }
 
-    .content__container {
+    .swiper-content__container {
         width: 95%;
     }
 

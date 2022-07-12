@@ -29,6 +29,8 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
 
   public componentDidMount(): void {
     this._getItemsFromSPList();
+
+    this.forceUpdate();
   }
 
   public render(): React.ReactElement<ISliderWebpartProps> {
@@ -40,7 +42,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     };
  
     return (
-      <div className="main__container">
+      <div className="swiper-main__container">
         <Swiper
           modules={[EffectFade, Pagination]}
           pagination={pagination}
@@ -51,19 +53,19 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
           { 
             this.state.displayItems.map((item) =>
               <SwiperSlide className="myswiperslide">
-                <div className="card">
-                  <div className="img__container">
-                    <img className="card__image" src={JSON.parse(item.RollupImage).serverRelativeUrl}></img>
+                <div className="swiper__card">
+                  <div className="swiper-img__container">
+                    <img className="swiper-card__image" src={JSON.parse(item.RollupImage).serverRelativeUrl}></img>
                   </div>
-                  <div className="content__container">
-                    <div className="card__title">
+                  <div className="swiper-content__container">
+                    <div className="swiper-card__title">
                       {item.Title}
                     </div>
-                    <div className="card__content">
+                    <div className="swiper-card__content">
                       <p>{ReactHtmlParser(item.Content_EN)}</p>
                     </div>
-                    <div className="footer__content">
-                      <a href={"https://waion365.sharepoint.com/sites/MTR-GIPDEV/SitePages/Showcase.aspx" + "?itemid=" + item.ID} className="back__button">LEARN MORE</a>
+                    <div className="swiper-button">
+                      <a href={"https://waion365.sharepoint.com/sites/MTR-GIPDEV/SitePages/Showcase.aspx" + "?itemid=" + item.ID} className="learn__more">LEARN MORE</a>
                     </div>
                   </div>
                 </div>
