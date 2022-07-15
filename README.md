@@ -2,9 +2,7 @@
 
 ## Summary
 
-Short summary on functionality and used technologies.
-
-[picture of the solution in action, if possible]
+SharePoint webpart built using SPFx, React, and PnPjs.
 
 ## Used SharePoint Framework Version
 

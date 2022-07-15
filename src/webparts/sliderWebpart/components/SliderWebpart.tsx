@@ -32,9 +32,9 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
 
   public componentDidMount(): void {
 
+    // Retrieving QueryString parameters from the url
     const urlParams = new URLSearchParams(window.location.search);
     const res = urlParams.get("preview");
-
     console.log(res);
 
     if (res) {
@@ -77,7 +77,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
                     </div> 
                     <div className="swiper-card__content">
                       <div className="description__text">{ReactHtmlParser(item.Content_EN)}</div>
-                    </div> 
+                    </div>
                     <div className="swiper-button">
                       <a href={"https://waion365.sharepoint.com/sites/MTR-GIPDEV/SitePages/Showcase.aspx" + "?itemid=" + item.ID} className="learn__more">LEARN MORE</a>
                     </div>
@@ -96,10 +96,11 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
 
   /* Controller Methods */
   private _getItemsFromSPList() {
-
+    // Getting the current date and time 
     const currDate = new Date();
     let nowString = currDate.toISOString();
 
+    // Retrieving list items that are published and approved 
     pnp.sp.web.lists.getByTitle(listName).items
       .filter("OData__ModerationStatus eq '0' and PublishDate lt '" + nowString + "'  and UnpublishDate gt '" + nowString + "'")
       .select("Title", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
@@ -111,8 +112,9 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     const currDate = new Date();
     let nowString = currDate.toISOString();
 
+    // Retrieving list items that are Pending approval or Approved
     pnp.sp.web.lists.getByTitle(listName).items
-      .filter("UnpublishDate gt '" + nowString + "'")
+      .filter("OData__ModerationStatus ne '1' and UnpublishDate gt '" + nowString + "'")
       .select("Title", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
       .get().then
       ((Response) => {
@@ -121,11 +123,12 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
       });
   }
 
+  // Filtering through the list results and setting up the data 
   private _filterAndSet(response) {
     console.log("Setting up the list items...");
     let displayOrderItems = response.filter(item => item.DisplayOrder !== null);
     let rest = response.filter(item => item.DisplayOrder === null);
-
+ 
     // Sorting items with display order fields in ascending order 
     displayOrderItems.sort(function (item1, item2) {
       if (item1.DisplayOrder === null) {
