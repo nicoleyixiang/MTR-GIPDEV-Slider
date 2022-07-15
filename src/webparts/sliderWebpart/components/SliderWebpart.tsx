@@ -7,7 +7,6 @@ import { ISliderWebpartState } from './ISliderWebpartState';
 import pnp from 'sp-pnp-js';
 import { ClassItem } from '../models/ClassItem';
 import ReactHtmlParser from 'react-html-parser';
-import './styles.css';
 
 import { Swiper, SwiperSlide } from 'swiper/react/swiper-react';
 import 'swiper/swiper.min.css';
@@ -15,8 +14,12 @@ import { Navigation, EffectFade, Pagination } from 'swiper';
 import 'swiper/modules/navigation/navigation.min.css';
 import 'swiper/modules/pagination/pagination.min.css';
 
+import './styles.css';
+
+/* Constants */
 const listName = "Publication";
 
+/* Webpart */
 export default class SliderWebpart extends React.Component<ISliderWebpartProps, ISliderWebpartState> {
 
   constructor(props: ISliderWebpartProps) {
@@ -67,22 +70,22 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
                 <div className="swiper__card">
                   <div className="swiper-img__container">
                     <img className="swiper-card__image" src={item.RollupImage ? JSON.parse(item.RollupImage).serverRelativeUrl : "https://outhink.com/wp-content/themes/outhink-theme/images/ip.jpg"}></img>
-                  </div>
+                  </div> 
                   <div className="swiper-content__container">
                     <div className="swiper-card__title">
-                      {item.Title}
-                    </div>
+                      {item.Title} 
+                    </div> 
                     <div className="swiper-card__content">
-                      <p>{ReactHtmlParser(item.Content_EN)}</p>
-                    </div>
+                      <div className="description__text">{ReactHtmlParser(item.Content_EN)}</div>
+                    </div> 
                     <div className="swiper-button">
                       <a href={"https://waion365.sharepoint.com/sites/MTR-GIPDEV/SitePages/Showcase.aspx" + "?itemid=" + item.ID} className="learn__more">LEARN MORE</a>
                     </div>
-                  </div>
+                  </div> 
                 </div>
               </SwiperSlide>
             )
-          }
+          } 
         </Swiper>
         <div>
           <a href={"https://waion365.sharepoint.com/sites/MTR-GIPDEV/SitePages/Publications.aspx"} className="see__list">GO TO FULL LISTING</a>
@@ -91,6 +94,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     );
   }
 
+  /* Controller Methods */
   private _getItemsFromSPList() {
 
     const currDate = new Date();
@@ -111,7 +115,10 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
       .filter("UnpublishDate gt '" + nowString + "'")
       .select("Title", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
       .get().then
-      ((Response) => {this._filterAndSet(Response)});
+      ((Response) => {
+        let filtered = Response.filter(item => item.OData__ModerationStatus !== 1);
+        this._filterAndSet(filtered)
+      });
   }
 
   private _filterAndSet(response) {
