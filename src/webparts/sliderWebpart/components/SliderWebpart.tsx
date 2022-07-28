@@ -8,6 +8,8 @@ import pnp from 'sp-pnp-js';
 import { ClassItem } from '../models/ClassItem';
 import ReactHtmlParser from 'react-html-parser';
 
+import { RichText } from "@pnp/spfx-controls-react/lib/RichText";
+
 import { Swiper, SwiperSlide } from 'swiper/react/swiper-react';
 import 'swiper/swiper.min.css';
 import { Navigation, EffectFade, Pagination } from 'swiper';
@@ -26,7 +28,8 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     super(props);
 
     this.state = {
-      displayItems: []
+      displayItems: [],
+      webUrl: ""
     }
   }
 
@@ -35,6 +38,11 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     // Retrieving QueryString parameters from the url
     const urlParams = new URLSearchParams(window.location.search);
     const res = urlParams.get("preview");
+
+    pnp.sp.web.select("ServerRelativeUrl").get().then((Response) => {
+      this.setState({ webUrl: Response.ServerRelativeUrl });
+    });
+
     console.log(res);
 
     if (res) {
@@ -55,40 +63,42 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
       }
     };
 
+    // const url = this.context.
     return (
       <div className="swiper-main__container">
+        <div className="publications__big-title">
+          Publication
+        </div>
         <Swiper
           modules={[EffectFade, Pagination]}
           pagination={pagination}
           speed={800}
-          initialSlide={0}
+          initialSlide={1}
           slidesPerView={1}
           className="myswiper">
           {
             this.state.displayItems.map((item) =>
               <SwiperSlide className="myswiperslide">
-                <div className="swiper__card">
-                  <div className="swiper-img__container">
-                    <img className="swiper-card__image" src={item.RollupImage ? JSON.parse(item.RollupImage).serverRelativeUrl : "https://outhink.com/wp-content/themes/outhink-theme/images/ip.jpg"}></img>
-                  </div> 
-                  <div className="swiper-content__container">
-                    <div className="swiper-card__title">
-                      {item.Title} 
-                    </div> 
-                    <div className="swiper-card__content">
-                      <div className="description__text">{ReactHtmlParser(item.Content_EN)}</div>
-                    </div>
-                    <div className="swiper-button">
-                      <a href={"https://waion365.sharepoint.com/sites/MTR-GIPDEV/SitePages/Showcase.aspx" + "?itemid=" + item.ID} className="learn__more">LEARN MORE</a>
-                    </div>
-                  </div> 
+                <div className="swiper-img__container">
+                  <img src={item.RollupImage ? JSON.parse(item.RollupImage).serverRelativeUrl : "https://outhink.com/wp-content/themes/outhink-theme/images/ip.jpg"}></img>
+                </div>
+                <div className="swiper-content__container">
+                  <div className="swiper-card__title">
+                    {item.Title}
+                  </div>
+                  <div className="description__text">
+                    {ReactHtmlParser(item.Content_EN)}
+                  </div>
+                  <div className="swiper-button">
+                    <a href={this.state.webUrl + "/SitePages/PublicationDetails.aspx" + "?itemid=" + item.ID} className="learn__more">LEARN MORE</a>
+                  </div>
                 </div>
               </SwiperSlide>
             )
-          } 
+          }
         </Swiper>
         <div>
-          <a href={"https://waion365.sharepoint.com/sites/MTR-GIPDEV/SitePages/Publications.aspx"} className="see__list">GO TO FULL LISTING</a>
+          <a href={this.state.webUrl + "/SitePages/Publications.aspx"} className="see__list">GO TO FULL LISTING</a>
         </div>
       </div>
     );
@@ -105,7 +115,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
       .filter("OData__ModerationStatus eq '0' and PublishDate lt '" + nowString + "'  and UnpublishDate gt '" + nowString + "'")
       .select("Title", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
       .get().then
-      ((Response) => {this._filterAndSet(Response)});
+      ((Response) => { this._filterAndSet(Response) });
   }
 
   private _getPreviewSPListItems() {
@@ -128,7 +138,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     console.log("Setting up the list items...");
     let displayOrderItems = response.filter(item => item.DisplayOrder !== null);
     let rest = response.filter(item => item.DisplayOrder === null);
- 
+
     // Sorting items with display order fields in ascending order 
     displayOrderItems.sort(function (item1, item2) {
       if (item1.DisplayOrder === null) {
