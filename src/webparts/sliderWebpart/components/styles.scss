@@ -19,7 +19,7 @@
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    padding-bottom: 30px;
+    padding-bottom: 35px;
 }
 
 .myswiperslide {
@@ -31,7 +31,7 @@
     background-color: rgb(246,248,250);
     width: 100%;
     height: max-content;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .swiper-img__container {
@@ -43,7 +43,7 @@
 
 .swiper-img__container img {
     width: 100%;
-    aspect-ratio: 1.33 / 1;
+    height: 100%;
     object-fit: cover;
     display: block;
     background-position: center center;
@@ -82,7 +82,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     flex-grow: 1; 
-    height: 40%;
+    height: 38%;
     // height: 100px;
     width: 100%;
 }
@@ -92,7 +92,7 @@
 }
 
 .myswiper .swiper-pagination-bullet {
-    width: 50px;
+    width: 40px;
     height: 27px;
     border-radius: 0px;
     text-align: center;
@@ -199,6 +199,7 @@ a.see__list:hover {
     .swiper-img__container img {
         width: 100%;
         max-width: 900px;
+        aspect-ratio: 1.33 / 1;
         height: 100%;
         display: block;
         margin-right: 0;
@@ -242,5 +243,9 @@ a.see__list:hover {
         width: 100%;
         height: max-content;
         margin-bottom: 50px;
+    }
+
+    .myswiper .swiper-pagination-bullet {
+        width: calc(100vw / 15);
     }
 }
