@@ -16,7 +16,7 @@ import { Navigation, EffectFade, Pagination } from 'swiper';
 import 'swiper/modules/navigation/navigation.min.css';
 import 'swiper/modules/pagination/pagination.min.css';
 
-import './styles.css';
+import './styles.scss';
 
 /* Constants */
 const listName = "Publication";
@@ -29,7 +29,8 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
 
     this.state = {
       displayItems: [],
-      webUrl: ""
+      webUrl: "",
+      isChinese: false
     }
   }
 
@@ -44,6 +45,11 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     });
 
     console.log(res);
+
+    const url = window.location.search;
+    if (url.indexOf("/CH/") !== -1) {
+      this.setState({ isChinese: true });
+    }
 
     if (res) {
       this._getPreviewSPListItems();
@@ -62,8 +68,6 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
         return '<span class="' + className + '">' + "</span>";
       }
     };
-
-    // const url = this.context.
     return (
       <div className="swiper-main__container">
         <div className="publications__big-title">
@@ -78,27 +82,34 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
           className="myswiper">
           {
             this.state.displayItems.map((item) =>
-              <SwiperSlide className="myswiperslide">
-                <div className="swiper-img__container">
-                  <img src={item.RollupImage ? JSON.parse(item.RollupImage).serverRelativeUrl : "https://outhink.com/wp-content/themes/outhink-theme/images/ip.jpg"}></img>
-                </div>
-                <div className="swiper-content__container">
-                  <div className="swiper-card__title">
-                    {item.Title}
+              <div className="row">
+                <SwiperSlide className="myswiperslide">
+                  <div className="swiper-img__container">
+                    <img src={item.RollupImage ? JSON.parse(item.RollupImage).serverRelativeUrl : "https://outhink.com/wp-content/themes/outhink-theme/images/ip.jpg"}></img>
                   </div>
-                  <div className="description__text">
-                    {ReactHtmlParser(item.Content_EN)}
+                  <div className="swiper-content__container">
+                    <div className="swiper-card__title">
+                      {item.Title}
+                    </div>
+                    <div className="description__text">
+                      {/* <RichText
+                        className='description__text'
+                        value={this.state.isChinese ? item.Content_CH : item.Content_EN}
+                        isEditMode={false}
+                      /> */}
+                      {ReactHtmlParser(item.Content_EN)}
+                    </div>
+                    <div className="swiper-button">
+                      <a href={this.state.webUrl + (this.state.isChinese ? "/SitePages/CH/PublicationDetails.aspx" : "/SitePages/PublicationDetails.aspx") + "?itemid=" + item.ID} className="learn__more">LEARN MORE</a>
+                    </div>
                   </div>
-                  <div className="swiper-button">
-                    <a href={this.state.webUrl + "/SitePages/PublicationDetails.aspx" + "?itemid=" + item.ID} className="learn__more">LEARN MORE</a>
-                  </div>
-                </div>
-              </SwiperSlide>
+                </SwiperSlide>
+              </div>
             )
           }
         </Swiper>
         <div>
-          <a href={this.state.webUrl + "/SitePages/Publications.aspx"} className="see__list">GO TO FULL LISTING</a>
+          <a href={this.state.webUrl + (this.state.isChinese ? "/SitePages/CH/Publications.aspx" : "/SitePages/Publications.aspx")} className="see__list">GO TO FULL LISTING</a>
         </div>
       </div>
     );
@@ -113,7 +124,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     // Retrieving list items that are published and approved 
     pnp.sp.web.lists.getByTitle(listName).items
       .filter("OData__ModerationStatus eq '0' and PublishDate lt '" + nowString + "'  and UnpublishDate gt '" + nowString + "'")
-      .select("Title", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
+      .select("Title", "Title_CH", "Content_CH", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
       .get().then
       ((Response) => { this._filterAndSet(Response) });
   }
@@ -125,7 +136,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     // Retrieving list items that are Pending approval or Approved
     pnp.sp.web.lists.getByTitle(listName).items
       .filter("OData__ModerationStatus ne '1' and UnpublishDate gt '" + nowString + "'")
-      .select("Title", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
+      .select("Title", "Title_CH", "Content_CH", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
       .get().then
       ((Response) => {
         let filtered = Response.filter(item => item.OData__ModerationStatus !== 1);

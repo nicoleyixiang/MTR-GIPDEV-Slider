@@ -2,7 +2,9 @@ import { ISPItem } from "./ISPItem";
 
 export class ClassItem {
     public Title : string;
+    public Title_CH : string;
     public Content_EN : string;
+    public Content_CH : string;
     public RollupImage : string;
     public ID : number;
     public DisplayOrder : number;
@@ -11,6 +13,8 @@ export class ClassItem {
     constructor(item : ISPItem) {
         this.Title = item.Title;
         this.Content_EN = item.Content_EN;
+        this.Content_CH = item.Content_CH
+        this.Title_CH = item.Title_CH;
         this.RollupImage = item.RollupImage;
         this.ID = item.ID;
     }
