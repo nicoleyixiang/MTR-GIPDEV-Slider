@@ -80,6 +80,7 @@
     padding: 0;
     margin-top: 5px;
     overflow: hidden;
+    overflow-y: hidden;
     text-overflow: ellipsis;
     flex-grow: 1; 
     height: 38%;
@@ -91,8 +92,18 @@
     margin-bottom: 0;
 }
 
+.slider__rich-text {
+    margin-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    // padding: 0;
+    overflow: hidden;
+}
+
 .myswiper .swiper-pagination-bullet {
-    width: 40px;
+    width: 50px;
     height: 27px;
     border-radius: 0px;
     text-align: center;
@@ -246,6 +257,6 @@ a.see__list:hover {
     }
 
     .myswiper .swiper-pagination-bullet {
-        width: calc(100vw / 15);
+        width: calc(100vw / 13);
     }
 }

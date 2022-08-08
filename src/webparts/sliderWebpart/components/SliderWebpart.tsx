@@ -20,6 +20,7 @@ import './styles.scss';
 
 /* Constants */
 const listName = "Publication";
+const slidesToShow = 5;
 
 /* Webpart */
 export default class SliderWebpart extends React.Component<ISliderWebpartProps, ISliderWebpartState> {
@@ -42,12 +43,15 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
 
     pnp.sp.web.select("ServerRelativeUrl").get().then((Response) => {
       this.setState({ webUrl: Response.ServerRelativeUrl });
+      console.log(Response);
     });
 
     console.log(res);
 
-    const url = window.location.search;
+    const url = window.location.href;
+    console.log(url);
     if (url.indexOf("/CH/") !== -1) {
+      console.log("Setting language to Chinese");
       this.setState({ isChinese: true });
     }
 
@@ -71,7 +75,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     return (
       <div className="swiper-main__container">
         <div className="publications__big-title">
-          Publication
+          {this.state.isChinese ? "出版物" : "Publication"}
         </div>
         <Swiper
           modules={[EffectFade, Pagination]}
@@ -92,15 +96,16 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
                       {item.Title}
                     </div>
                     <div className="description__text">
-                      {/* <RichText
-                        className='description__text'
-                        value={this.state.isChinese ? item.Content_CH : item.Content_EN}
+                      <RichText
+                        className="slider__rich-text"
+                        // className='description__text'
+                        value={item.Content}
                         isEditMode={false}
-                      /> */}
-                      {ReactHtmlParser(item.Content_EN)}
+                      />
+                      {/* {ReactHtmlParser(item.Content)} */}
                     </div>
                     <div className="swiper-button">
-                      <a href={this.state.webUrl + (this.state.isChinese ? "/SitePages/CH/PublicationDetails.aspx" : "/SitePages/PublicationDetails.aspx") + "?itemid=" + item.ID} className="learn__more">LEARN MORE</a>
+                      <a href={this.state.webUrl + (this.state.isChinese ? "/SitePages/CH/PublicationDetails.aspx" : "/SitePages/EN/PublicationDetails.aspx") + "?itemid=" + item.ID} className="learn__more">{this.state.isChinese ? "更多" : "LEARN MORE"}</a>
                     </div>
                   </div>
                 </SwiperSlide>
@@ -109,7 +114,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
           }
         </Swiper>
         <div>
-          <a href={this.state.webUrl + (this.state.isChinese ? "/SitePages/CH/Publications.aspx" : "/SitePages/Publications.aspx")} className="see__list">GO TO FULL LISTING</a>
+          <a href={this.state.webUrl + (this.state.isChinese ? "/SitePages/CH/Publication.aspx" : "/SitePages/EN/Publication.aspx")} className="see__list">GO TO FULL LISTING</a>
         </div>
       </div>
     );
@@ -147,8 +152,10 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
   // Filtering through the list results and setting up the data 
   private _filterAndSet(response) {
     console.log("Setting up the list items...");
-    let displayOrderItems = response.filter(item => item.DisplayOrder !== null);
-    let rest = response.filter(item => item.DisplayOrder === null);
+    console.log(response);
+    let items = response.map(item => new ClassItem(item, this.state.isChinese));
+    let displayOrderItems = items.filter(item => item.DisplayOrder !== null);
+    let rest = items.filter(item => item.DisplayOrder === null);
 
     // Sorting items with display order fields in ascending order 
     displayOrderItems.sort(function (item1, item2) {
@@ -174,6 +181,8 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     // Combine both lists with display order items in front
     let allListItems = displayOrderItems.concat(rest);
 
-    this.setState({ displayItems: allListItems.slice(0, 5) });
+    console.log(allListItems)
+
+    this.setState({ displayItems: allListItems.slice(0, slidesToShow) });
   }
 }

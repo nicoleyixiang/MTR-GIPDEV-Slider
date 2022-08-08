@@ -1,7 +1,7 @@
-import { ISPItem } from "../models/ISPItem";
+import { ClassItem } from "../models/ClassItem";
 
 export interface ISliderWebpartState {
-    displayItems : ISPItem[];
+    displayItems : ClassItem[];
     webUrl : string;
     isChinese : boolean;
 }
