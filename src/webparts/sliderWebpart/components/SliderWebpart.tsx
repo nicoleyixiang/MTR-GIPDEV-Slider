@@ -3,20 +3,17 @@ import styles from './SliderWebpart.module.scss';
 import { ISliderWebpartProps } from './ISliderWebpartProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { ISliderWebpartState } from './ISliderWebpartState';
-
 import pnp from 'sp-pnp-js';
 import { ClassItem } from '../models/ClassItem';
 import ReactHtmlParser from 'react-html-parser';
-
 import { RichText } from "@pnp/spfx-controls-react/lib/RichText";
-
 import { Swiper, SwiperSlide } from 'swiper/react/swiper-react';
 import 'swiper/swiper.min.css';
 import { Navigation, EffectFade, Pagination } from 'swiper';
 import 'swiper/modules/navigation/navigation.min.css';
 import 'swiper/modules/pagination/pagination.min.css';
-
 import './styles.scss';
+import { TermItemSuggestion } from '@pnp/spfx-controls-react';
 
 /* Constants */
 const listName = "Publication";
@@ -43,11 +40,9 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
 
     pnp.sp.web.select("ServerRelativeUrl").get().then((Response) => {
       this.setState({ webUrl: Response.ServerRelativeUrl });
-      console.log(Response);
     });
 
-    console.log(res);
-
+    // Checking for Chinese / English selection
     const url = window.location.href;
     console.log(url);
     if (url.indexOf("/CH/") !== -1) {
@@ -56,10 +51,10 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     }
 
     if (res) {
-      this._getPreviewSPListItems();
+      this._getItemsFromSPList(true);
     }
     else {
-      this._getItemsFromSPList();
+      this._getItemsFromSPList(false);
     }
 
     this.forceUpdate();
@@ -95,7 +90,7 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
                     <div className="swiper-card__title">
                       {item.Title}
                     </div>
-                    <div className="description__text">
+                    <div className="swiper-description__text">
                       <RichText
                         className="slider__rich-text"
                         // className='description__text'
@@ -121,68 +116,57 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
   }
 
   /* Controller Methods */
-  private _getItemsFromSPList() {
+  private async _getItemsFromSPList(isPreview: boolean) {
     // Getting the current date and time 
     const currDate = new Date();
     let nowString = currDate.toISOString();
 
-    // Retrieving list items that are published and approved 
-    pnp.sp.web.lists.getByTitle(listName).items
-      .filter("OData__ModerationStatus eq '0' and PublishDate lt '" + nowString + "'  and UnpublishDate gt '" + nowString + "'")
+    let filterString1 = "DisplayOrder ne null and OData__ModerationStatus eq '0' and PublishDate lt '" + nowString + "'  and UnpublishDate gt '" + nowString + "'";
+    let filterString2 = "DisplayOrder eq null and OData__ModerationStatus eq '0' and PublishDate lt '" + nowString + "'  and UnpublishDate gt '" + nowString + "'";
+    if (isPreview) {
+      filterString1 = "DisplayOrder ne null and OData__ModerationStatus ne '1' and UnpublishDate gt '" + nowString + "'";
+      filterString2 = "DisplayOrder eq null and OData__ModerationStatus ne '1' and UnpublishDate gt '" + nowString + "'";
+    }
+
+    // Retrieving list items that are published and approved (sorting by display order in ascending order)
+    let items = await pnp.sp.web.lists.getByTitle(listName).items
+      .filter(filterString1)
+      .orderBy("DisplayOrder", true)
+      .orderBy("PublishDate", false)
       .select("Title", "Title_CH", "Content_CH", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
-      .get().then
-      ((Response) => { this._filterAndSet(Response) });
-  }
+      .top(5)
+      .get();
 
-  private _getPreviewSPListItems() {
-    const currDate = new Date();
-    let nowString = currDate.toISOString();
-
-    // Retrieving list items that are Pending approval or Approved
-    pnp.sp.web.lists.getByTitle(listName).items
-      .filter("OData__ModerationStatus ne '1' and UnpublishDate gt '" + nowString + "'")
-      .select("Title", "Title_CH", "Content_CH", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
-      .get().then
-      ((Response) => {
-        let filtered = Response.filter(item => item.OData__ModerationStatus !== 1);
-        this._filterAndSet(filtered)
-      });
-  }
-
-  // Filtering through the list results and setting up the data 
-  private _filterAndSet(response) {
-    console.log("Setting up the list items...");
-    console.log(response);
-    let items = response.map(item => new ClassItem(item, this.state.isChinese));
-    let displayOrderItems = items.filter(item => item.DisplayOrder !== null);
-    let rest = items.filter(item => item.DisplayOrder === null);
-
-    // Sorting items with display order fields in ascending order 
-    displayOrderItems.sort(function (item1, item2) {
+    items.sort(function (item1, item2) {
       if (item1.DisplayOrder === null) {
-        return 1;
+        return 1; // Positive number means item1 > item2 (put items with display order in front)
       }
       else if (item2.DisplayOrder === null) {
-        return -1;
+        return -1; // Negative number means item1 < item2 (put items with display order in front)
       }
-      else if (item1.DisplayOrder - item2.DisplayOrder === 0) {
+      else if (item1.DisplayOrder - item2.DisplayOrder === 0) { // Sort by publish date if display order are tied  
         if (item1.PublishDate > item2.PublishDate) return -1;
         return 1;
       }
-      return item1.DisplayOrder - item2.DisplayOrder;
+      return item1.DisplayOrder - item2.DisplayOrder; // Sort by display order (ascending)
     });
 
-    // Sorting the rest of the list by most recent first 
-    rest.sort(function (item1, item2) {
-      if (item1.PublishDate > item2.PublishDate) return -1;
-      return 1;
-    })
+    // Retrieving more items if the number of items with display order logged is not enough 
+    if (items && items.length < slidesToShow) {
+      const diff = slidesToShow - items.length;
+      console.log(diff);
+      // Retrieving items (sorting by publish date in descending order)
+      const publishDateItems = await pnp.sp.web.lists.getByTitle(listName).items
+        .filter(filterString2)
+        .orderBy("PublishDate", false)
+        .select("Title", "Title_CH", "Content_CH", "Content_EN", "ID", "DisplayOrder", "PublishDate", "RollupImage")
+        .top(diff)
+        .get();
+      items = items.concat(publishDateItems);
+    }
 
-    // Combine both lists with display order items in front
-    let allListItems = displayOrderItems.concat(rest);
-
-    console.log(allListItems)
-
-    this.setState({ displayItems: allListItems.slice(0, slidesToShow) });
+    let classItems = items.map(item => new ClassItem(item, this.state.isChinese));
+    console.log(classItems);
+    this.setState({ displayItems: classItems })
   }
 }

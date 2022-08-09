@@ -74,7 +74,7 @@
     -webkit-box-orient: vertical;
 }
 
-.description__text {
+.swiper-description__text {
     white-space: normal;
     overflow-wrap: break-word;
     padding: 0;
@@ -88,18 +88,19 @@
     width: 100%;
 }
 
-.description__text p {
+.swiper-description__text p {
     margin-bottom: 0;
 }
 
 .slider__rich-text {
     margin-bottom: 0;
-    padding-left: 0;
-    padding-right: 0;
-    padding-bottom: 0;
-    padding-top: 0;
-    // padding: 0;
-    overflow: hidden;
+    // padding-left: 0;
+    // padding-right: 0;
+    // padding-bottom: 0;
+    // padding-top: 0;
+    padding: 0 !important;
+    overflow-y: hidden !important;
+    overflow: hidden !important;
 }
 
 .myswiper .swiper-pagination-bullet {
