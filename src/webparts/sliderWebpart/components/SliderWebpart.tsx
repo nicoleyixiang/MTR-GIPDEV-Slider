@@ -44,7 +44,6 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
 
     // Checking for Chinese / English selection
     const url = window.location.href;
-    console.log(url);
     if (url.indexOf("/CH/") !== -1) {
       console.log("Setting language to Chinese");
       this.setState({ isChinese: true });
@@ -93,11 +92,9 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
                     <div className="swiper-description__text">
                       <RichText
                         className="slider__rich-text"
-                        // className='description__text'
                         value={item.Content}
                         isEditMode={false}
                       />
-                      {/* {ReactHtmlParser(item.Content)} */}
                     </div>
                     <div className="swiper-button">
                       <a href={this.state.webUrl + (this.state.isChinese ? "/SitePages/CH/PublicationDetails.aspx" : "/SitePages/EN/PublicationDetails.aspx") + "?itemid=" + item.ID} className="learn__more">{this.state.isChinese ? "更多" : "LEARN MORE"}</a>
@@ -115,7 +112,6 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     );
   }
 
-  /* Controller Methods */
   private async _getItemsFromSPList(isPreview: boolean) {
     // Getting the current date and time 
     const currDate = new Date();
@@ -166,7 +162,6 @@ export default class SliderWebpart extends React.Component<ISliderWebpartProps, 
     }
 
     let classItems = items.map(item => new ClassItem(item, this.state.isChinese));
-    console.log(classItems);
     this.setState({ displayItems: classItems })
   }
 }
